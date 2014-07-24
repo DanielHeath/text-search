@@ -129,3 +129,21 @@ The default configuration combines each of these (using the English stem forms).
 In the case of proper nouns, this can be confusing - `Epping` is not a verb meaning `to ep`, even though `skiing` is a verb for `to ski`.
 When searching for proper nouns, you probably want to disable stopword and stem filters.
 See `proper_noun_config.sql` for a config which removes the stemmer.
+
+## Where to put the search stuff
+
+99% of the code you'll write if you use postgres text-search
+is postgres specific, and looks really wierd embedded in ruby.
+
+Additionally, it's easy to accidentally change it so that
+the index no longer applies, causing search performance
+to plummet.
+
+In my current project I use RSpec to test that search
+works correctly. However, the only code in class under test is `find_by_sql ['select * from text_search(?, ?, ?)', query, per_page, page_number]`
+
+I originally put the search SQL in a model scope.
+However, I often had to write a migration to maintain
+the index when I changed the query.
+As a result, I moved the query into the migration
+as a stored procedure (so far this has worked well for me).
