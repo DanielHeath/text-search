@@ -2,10 +2,6 @@
 
 ## Alternatives
 
-### No search
-
-Maybe it's all too much hassle & not worth adding.
-
 ### LIKE queries
 
 There are two options here:
