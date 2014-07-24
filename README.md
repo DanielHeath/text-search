@@ -147,3 +147,5 @@ However, I often had to write a migration to maintain
 the index when I changed the query.
 As a result, I moved the query into the migration
 as a stored procedure (so far this has worked well for me).
+
+For an example of how I've done this, see `main.sql`.
