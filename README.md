@@ -1,11 +1,55 @@
 # Text-search with postgres
 
+## Alternatives
+
+### No search
+
+Maybe it's all too much hassle & not worth adding.
+
+### LIKE queries
+
+There are two options here:
+ * '%<your search>%', which is *very* slow.
+ * '<your search>%', which only works for prefix matching (users have to type in the first word of the document to find it).
+
+### MYSQL
+
+Mysql text-search only works with MyISAM tables.
+MyISAM is basically broken (might as well use mongo - no transactions/FKs).
+
+### External search (Sphinx, SOLR, Elasticsearch, etc)
+
+These are more featureful and generally provide better
+quality search with more configuration parameters.
+
+However, adding new pieces to your stack isn't a decision to take lightly.
+A few of the chores you'll face:
+ * Copy your data over when you set it up
+ * Copy new data over whenever it changes
+ * Come up with a secure production configuration
+ * Add it to your server provisioning scripts
+ * Add it to your developer setup instructions
+ * Add it to your CI nodes
+ * Forward its logs to your log aggregator
+ * Setup newrelic/nagios integration
+ * Figure out what to do when it fails & train your on-call staff to do it
+ * Get woken up when ops can't fix it at night
+ * Train other devs in it (have you tried reading the ElasticSearch docs?)
+
+I'm sure I've forgotten some important bits here,
+but the core idea is that it's a lot of work to
+add something like elasticsearch to your stack.
+
 ## Documentation
 
-Postgres text-search has very good documentation
-once you understand the basic concepts. I haven't found
-a good entry-level introduction as yet, so this is
-my attempt to quickly explain the important bits.
+Postgres text-search has very detailed documentation
+which is fantastic if you're trying to debug something
+wierd but less helpful if you're trying to learn how
+to use it.
+
+I haven't found a good entry-level
+introduction yet, so this is my attempt to quickly
+explain the important bits.
 
 ## TSVector
 A postgres type used for search (TextSearch Vector).
@@ -28,10 +72,11 @@ See that:
 ## GIN and GIST index types
 
 Postgres offers two index types which are suited to
-text search: GIN (generalized inverted index) and GIST (Generalized Search Tree).
+text search: GIN (generalized inverted index) and
+GIST (Generalized Search Tree).
 
-The documentation goes into detail about which to use when; GIN is faster to read but slower to write.
-
+The documentation goes into detail about which to use
+when; GIN is faster to read but slower to write.
 
 Unlike most DBMS's, postgres lets you create an index
 on the result of a function.
