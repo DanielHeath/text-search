@@ -7,6 +7,10 @@
 -- This version is a copy of the `simple` config
 -- but does not also copy the stemmer.
 --
+-- To use it, replace
+-- TO_TSQUERY(... with TO_TSQUERY('proper_noun', ...
+-- TO_TSVECTOR(... with TO_TSVECTOR('proper_noun', ...
+--
 
 CREATE TEXT SEARCH DICTIONARY public.proper_noun (
     TEMPLATE = pg_catalog.simple
