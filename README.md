@@ -1,24 +1,35 @@
 # Text-search with postgres
 
+Postgres text-search has very detailed documentation
+which is fantastic if you're trying to debug something
+wierd but less helpful if you're trying to learn how
+to use it.
+
+I haven't found a good entry-level
+introduction yet, so this is my attempt to quickly
+explain the important bits.
+
 ## Alternatives
 
 ### LIKE queries
 
 There are two options here:
- * '%<your search>%', which is *very* slow.
- * '<your search>%', which only works for prefix matching (users have to type in the first word of the document to find it).
+ * '%TERM%', which is *very* slow.
+ * 'TERM%', which only works for prefix matching (users have to type in the first word of the document to find it).
 
 ### MYSQL
 
 Mysql text-search only works with MyISAM tables.
-MyISAM is basically broken (might as well use mongo - no transactions/FKs).
+
+This is unfortunate as MyISAM is basically broken (no transactions/FKs).
 
 ### External search (Sphinx, SOLR, Elasticsearch, etc)
 
-These are more featureful and generally provide better
+Any of these will provide better
 quality search with more configuration parameters.
 
 However, adding new pieces to your stack isn't a decision to take lightly.
+
 A few of the chores you'll face:
  * Copy your data over when you set it up
  * Copy new data over whenever it changes
@@ -32,20 +43,9 @@ A few of the chores you'll face:
  * Get woken up when ops can't fix it at night
  * Train other devs in it (have you tried reading the ElasticSearch docs?)
 
-I'm sure I've forgotten some important bits here,
-but the core idea is that it's a lot of work to
+I'm sure I've forgotten some important bits here.
+The core idea is that it's a lot of work to
 add something like elasticsearch to your stack.
-
-## Documentation
-
-Postgres text-search has very detailed documentation
-which is fantastic if you're trying to debug something
-wierd but less helpful if you're trying to learn how
-to use it.
-
-I haven't found a good entry-level
-introduction yet, so this is my attempt to quickly
-explain the important bits.
 
 ## TSVector
 A postgres type used for search (TextSearch Vector).
@@ -64,8 +64,7 @@ See that:
  * 'ski' has two positions because it is mentioned twice
  * irrelevant words are removed
 
-
-## GIN and GIST index types
+## GIN and GIST indexes
 
 Postgres offers two index types which are suited to
 text search: GIN (generalized inverted index) and
@@ -85,6 +84,13 @@ USING gin (
   TO_TSVECTOR(body)
 );
 ```
+
+You can then query like so:
+```
+select * from text_documents
+where TO_TSQUERY('my query') @@ TO_TSVECTOR(body)
+```
+and it'll use the index to return only rows which match.
 
 ## TSQuery (Text Search Query)
 
